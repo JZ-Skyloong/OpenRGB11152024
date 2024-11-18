@@ -1,7 +1,7 @@
 /*---------------------------------------------------------*\
-| RGBController_SkyloongGK104Pro.h                          |
+| RGBController_SkyloongKeyboard.h                          |
 |                                                           |
-|   RGBController for Skyloong GK104 Pro                    |
+|   RGBController for Skyloong Keyboard                    |
 |                                                           |
 |   Givo (givowo)                               30 Jun 2024 |
 |                                                           |
@@ -11,17 +11,20 @@
 
 #pragma once
 
+#include <atomic>
+#include <chrono>
+#include <thread>
 #include "RGBController.h"
-#include "SkyloongGK104ProController.h"
+#include "SkyloongKeyboardController.h"
 
 #define BRIGHTNESS_MIN      0
 #define BRIGHTNESS_MAX      134
 
-class RGBController_SkyloongGK104Pro : public RGBController
+class RGBController_SkyloongKeyboard : public RGBController
 {
 public:
-    RGBController_SkyloongGK104Pro(SkyloongGK104ProController* controller_ptr);
-    ~RGBController_SkyloongGK104Pro();
+    RGBController_SkyloongKeyboard(SkyloongKeyboardController* controller_ptr);
+    ~RGBController_SkyloongKeyboard();
 
     void        SetupZones();
     void        ResizeZone(int zone, int new_size);
@@ -32,6 +35,11 @@ public:
 
     void        DeviceUpdateMode();
 
+    void        KeepaliveThreadFunction();
+
 private:
-    SkyloongGK104ProController*   controller;
+    SkyloongKeyboardController*   controller;
+
+    std::atomic<bool>   keepalive_thread_run;
+    std::thread*        keepalive_thread;
 };

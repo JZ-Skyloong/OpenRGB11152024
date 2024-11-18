@@ -11,36 +11,42 @@
 
 #include <hidapi.h>
 #include "Detector.h"
-#include "SkyloongGK104ProController.h"
-#include "RGBController_SkyloongGK104Pro.h"
+#include "SkyloongKeyboardController.h"
+#include "RGBController_SkyloongKeyboard.h"
 
 /*-----------------------------------------------------*\
 | Keyboard product IDs                                  |
 \*-----------------------------------------------------*/
 #define SKYLOONG_KEYBOARD_VID           0x1EA7
-#define SKYLOONG_GK104_PRO_PID          0x0907
-#define SKYLOONG_GK104_PRO_I            1
+#define SKYLOONG_KEYBOARD_PID           0x0907
 
 /******************************************************************************************\
 *                                                                                          *
-*   DetectSkyloongGK104Pro                                                                 *
+*   DetectSkyloongKeyboard                                                                 *
 *                                                                                          *
-*       Tests the USB address to see if a Skyloong GK104 Pro controller exists there.      *
+*       Tests the USB address to see if a Skyloong Keyboard controller exists there.      *
 *                                                                                          *
 \******************************************************************************************/
-void DetectSkyloongGK104Pro(hid_device_info* info, const std::string& name)
+void DetectSkyloongKeyboard(hid_device_info* info, const std::string& name)
 {
     hid_device* dev = hid_open_path(info->path);
     if(dev)
     {
-        SkyloongGK104ProController* controller          = new SkyloongGK104ProController(dev, info->path);
-        RGBController_SkyloongGK104Pro* rgb_controller  = new RGBController_SkyloongGK104Pro(controller);
-        rgb_controller->name                            = name;
-        ResourceManager::get()->RegisterRGBController(rgb_controller);
+        SkyloongKeyboardController* controller = new SkyloongKeyboardController(dev, info->path);
+        gk_model* model = controller->GetModel();
+        if(model)
+        {
+            RGBController_SkyloongKeyboard* rgb_controller  = new RGBController_SkyloongKeyboard(controller);
+            rgb_controller->name = model->name;
+            ResourceManager::get()->RegisterRGBController(rgb_controller);
+        } else
+        {
+            delete controller;
+        }
     }
 }
 
 /*---------------------------------------------------------------------------------------------------------------------------------------------*\
 | Keyboards                                                                                                                                     |
 \*---------------------------------------------------------------------------------------------------------------------------------------------*/
-REGISTER_HID_DETECTOR_I("Skyloong GK104 Pro", DetectSkyloongGK104Pro, SKYLOONG_KEYBOARD_VID, SKYLOONG_GK104_PRO_PID, SKYLOONG_GK104_PRO_I);
+REGISTER_HID_DETECTOR_PU("Skyloong Keyboard", DetectSkyloongKeyboard, SKYLOONG_KEYBOARD_VID, SKYLOONG_KEYBOARD_PID, 0xFF00, 0x0050);
