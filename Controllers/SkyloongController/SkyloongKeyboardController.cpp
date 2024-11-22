@@ -328,7 +328,8 @@ key_set keys_GK61 =
 static gk_model gk_models[] = {
     { 656802051, "Skyloong GK104 Pro", keys_GK104 },
     { 656802008, "Skyloong GK980", keys_GK980 },
-    { 656802031, "Skyloong GK61", keys_GK61 }
+    { 656802031, "Skyloong GK61", keys_GK61 },
+    { 656802032, "Skyloong GK61", keys_GK61 }
 };
 
 SkyloongKeyboardController::SkyloongKeyboardController(hid_device* dev_handle, const char* path)
